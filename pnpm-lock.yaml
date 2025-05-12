@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@heroicons/react':
+    specifier: ^2.2.0
+    version: 2.2.0(react@19.1.0)
   '@reown/walletkit':
     specifier: ^1.2.4
     version: 1.2.4(typescript@5.8.3)
@@ -35,6 +38,9 @@ dependencies:
   react-dom:
     specifier: ^19.0.0
     version: 19.1.0(react@19.1.0)
+  react-icons:
+    specifier: ^5.5.0
+    version: 5.5.0(react@19.1.0)
   viem:
     specifier: ^2.29.1
     version: 2.29.1(typescript@5.8.3)(zod@3.22.4)
@@ -361,6 +367,14 @@ packages:
       '@ethereumjs/rlp': 4.0.1
       ethereum-cryptography: 2.2.1
       micro-ftch: 0.3.1
+    dev: false
+
+  /@heroicons/react@2.2.0(react@19.1.0):
+    resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
+    dependencies:
+      react: 19.1.0
     dev: false
 
   /@img/sharp-darwin-arm64@0.34.1:
@@ -4027,6 +4041,14 @@ packages:
     dependencies:
       react: 19.1.0
       scheduler: 0.26.0
+    dev: false
+
+  /react-icons@5.5.0(react@19.1.0):
+    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 19.1.0
     dev: false
 
   /react-is@16.13.1:
