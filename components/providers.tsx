@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider } from 'connectkit';
 import { config } from '@/lib/wagmi';
 import { XAuthProvider } from '@/contexts/XAuthProvider';
+import { LensProfileProvider } from '@/contexts/LensProfileProvider';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,9 @@ export function Providers({ children }: ProvidersProps) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider>
-          <XAuthProvider>{children}</XAuthProvider>
+          <XAuthProvider>
+            <LensProfileProvider>{children}</LensProfileProvider>
+          </XAuthProvider>
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
