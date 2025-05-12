@@ -4,7 +4,8 @@ import * as React from 'react';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider } from 'connectkit';
-import { config } from '@/lib/wagmi'; // Update to import 'config' instead of 'wagmiConfig'
+import { config } from '@/lib/wagmi';
+import { XAuthProvider } from '@/contexts/XAuthProvider';
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,9 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
+        <ConnectKitProvider>
+          <XAuthProvider>{children}</XAuthProvider>
+        </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

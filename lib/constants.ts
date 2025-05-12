@@ -76,3 +76,7 @@ export const LOCAL_STORAGE_KEYS = {
   EXPECTED_OWNER_ADDRESS: 'lensSession:expectedOwner',
   LENS_USERNAME: 'lensSession:username',
 };
+
+// Storage keys
+export const X_AUTH_STORAGE_KEY = 'x_auth_state';
+export const X_AUTH_CODE_VERIFIER_KEY = 'x_auth_code_verifier';
