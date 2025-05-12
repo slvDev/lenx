@@ -32,7 +32,7 @@ export default function XAuthCallbackPage() {
     handleXAuthCallback()
       .then(() => {
         // Clear the URL parameters after successful handling
-        router.replace('/login');
+        router.replace('/dashboard');
       })
       .catch((error) => {
         router.replace('/login?error=auth_failed');

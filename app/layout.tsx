@@ -2,27 +2,19 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import { Providers } from '@/components/providers';
-import { Header } from '@/components/layout/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Lens Profile Onboarding & Smart Account Manager',
-  description: 'Streamlined onboarding to Lens Protocol and smart account management.',
+  title: 'HugLens - Lens Profile X-Handle Onboarding',
+  description: 'Create and manage your Lens Profile with your X handle',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <Providers>
-          <Header />
-          <main className='pt-16'>{children}</main>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

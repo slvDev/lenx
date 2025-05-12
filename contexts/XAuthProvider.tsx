@@ -91,8 +91,8 @@ export function XAuthProvider({ children }: XAuthProviderProps) {
       setXHandle(handle);
       persistAuthState(true, handle);
 
-      // Clear URL parameters
-      router.replace('/login');
+      // handle this in then block
+      // router.replace('/login');
     } catch (error) {
       console.error('[XAuthProvider] Failed to complete X auth:', error);
       setIsXAuthenticated(false);
