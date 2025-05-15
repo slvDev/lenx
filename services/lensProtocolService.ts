@@ -1,122 +1,126 @@
-import { LENS_GLOBAL_NAMESPACE_ADDRESS } from '@/lib/constants';
-import {
-  PublicClient,
-  SessionClient,
-  mainnet,
-  type EvmAddress,
-  type URI,
-  type Account,
-  type CreateAccountWithUsernameResult,
-  type CanCreateUsernameRequest,
-  type CanCreateUsernameResult,
-} from '@lens-protocol/client';
+import { PublicClient, SessionClient, mainnet, type CanCreateUsernameResult } from '@lens-protocol/client';
+import { canCreateUsername, createUsername } from '@lens-protocol/client/actions';
+import { handleOperationWith } from '@lens-protocol/client/viem';
 
-import { fetchAccountsBulk, canCreateUsername, createAccountWithUsername } from '@lens-protocol/client/actions';
-
-const publicLensClient = PublicClient.create({
+// Create public client for Lens using the standard mainnet environment
+export const publicLensClient = PublicClient.create({
   environment: mainnet,
 });
 
-export interface LensProfile {
-  id: EvmAddress;
-  handle: string;
-  ownedBy: EvmAddress;
+// Create a more specific type for checkUsernameAvailability return values
+export type UsernameAvailabilityResult =
+  | { available: true; data: CanCreateUsernameResult }
+  | { available: false; reason: string; data: CanCreateUsernameResult };
+
+/**
+ * Checks if a username is available for creation
+ *
+ * @param sessionClient - The authenticated session client
+ * @param localName - The username to check
+ * @returns A Promise resolving to the availability result or error
+ */
+export async function checkUsernameAvailability(
+  sessionClient: SessionClient,
+  localName: string
+): Promise<UsernameAvailabilityResult | Error> {
+  const result = await canCreateUsername(sessionClient, {
+    localName,
+  });
+
+  if (result.isErr()) {
+    console.error('Error checking username availability:', result.error);
+    return result.error;
+  }
+
+  const data = result.value;
+
+  // Helper to interpret the result
+  switch (data.__typename) {
+    case 'NamespaceOperationValidationPassed':
+      // Username is available
+      return { available: true, data };
+
+    case 'NamespaceOperationValidationFailed':
+      // Creating username not allowed
+      return { available: false, reason: data.reason, data };
+
+    case 'NamespaceOperationValidationUnknown':
+      // Validation outcome unknown
+      return { available: false, reason: 'Unknown validation rules', data };
+
+    case 'UsernameTaken':
+      // Username not available
+      return { available: false, reason: 'Username already taken', data };
+
+    default:
+      return { available: false, reason: 'Unknown error', data };
+  }
 }
 
-export class LensProtocolService {
-  async fetchProfileByOwner(ownerAddress: EvmAddress): Promise<LensProfile | null> {
-    try {
-      const result = await fetchAccountsBulk(publicLensClient, {
-        ownedBy: [ownerAddress],
-      });
-
-      if (result.isErr()) {
-        console.error('Error fetching Lens profiles by owner:', result.error.message);
-        throw new Error(`Failed to fetch Lens profiles by owner: ${result.error.message}`);
-      }
-
-      const profiles = result.value;
-
-      if (!profiles.length) {
-        return null;
-      }
-
-      const sdkProfile: Account = profiles[0];
+/**
+ * Creates a new username on Lens Protocol
+ *
+ * This implements the example from the guide with proper error handling.
+ *
+ * @param sessionClient - The authenticated session client
+ * @param localName - The username to create
+ * @param walletClient - The wallet client for signing
+ * @returns A Promise resolving to success or error information
+ */
+export async function createLensUsername(
+  sessionClient: SessionClient,
+  localName: string,
+  walletClient: any
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // First, check if the username is available
+    const availabilityCheck = await checkUsernameAvailability(sessionClient, localName);
+    if (availabilityCheck instanceof Error || !availabilityCheck.available) {
       return {
-        id: sdkProfile.address,
-        handle: sdkProfile.username?.value || '', // Or sdkProfile.username.localName if only local name is needed
-        ownedBy: sdkProfile.owner as EvmAddress,
+        success: false,
+        error: availabilityCheck instanceof Error ? availabilityCheck.message : availabilityCheck.reason,
       };
-    } catch (error) {
-      console.error('Error in fetchProfileByOwner:', error);
-      if (error instanceof Error) throw error;
-      throw new Error('Failed to fetch Lens profile by owner');
     }
-  }
 
-  async isHandleAvailable(sessionClient: SessionClient, handle: string): Promise<boolean> {
-    try {
-      // Use CanCreateUsernameRequest as the type for the request object
-      const request: CanCreateUsernameRequest = {
-        localName: handle,
-        namespace: LENS_GLOBAL_NAMESPACE_ADDRESS as EvmAddress,
+    // 1. Prepare the username creation
+    const prepareResult = await createUsername(sessionClient, {
+      username: { localName },
+    });
+
+    if (prepareResult.isErr()) {
+      return {
+        success: false,
+        error: `Failed to prepare username creation: ${prepareResult.error.message}`,
       };
-      // Corrected type annotation for result to include null
-      const result: CanCreateUsernameResult | null = await canCreateUsername(sessionClient, request).then((res) =>
-        res.unwrapOr(null)
-      );
-
-      if (result === null) {
-        console.warn('Handle availability check resulted in null, treating as unavailable or error.');
-        return false;
-      }
-
-      return result.__typename === 'NamespaceOperationValidationPassed';
-    } catch (error) {
-      console.error('Error in isHandleAvailable:', error);
-      if (error instanceof Error) throw error;
-      throw new Error('Failed to check handle availability');
     }
-  }
 
-  async prepareCreateProfileTransaction(
-    sessionClient: SessionClient,
-    handle: string,
-    metadataUri: URI
-  ): Promise<CreateAccountWithUsernameResult> {
-    try {
-      const isAvailable = await this.isHandleAvailable(sessionClient, handle);
-      if (!isAvailable) {
-        throw new Error('Handle is not available or invalid.');
-      }
+    // 2. Sign and send the transaction using handleOperationWith
+    // Using any here to bypass the TypeScript issues
+    const signResult = await (handleOperationWith(walletClient) as any)(prepareResult.value);
 
-      const usernameInput: CanCreateUsernameRequest = {
-        localName: handle,
-        namespace: LENS_GLOBAL_NAMESPACE_ADDRESS as EvmAddress,
+    if (signResult.isErr()) {
+      return {
+        success: false,
+        error: `Failed to sign/broadcast transaction: ${signResult.error.message}`,
       };
-
-      const result = await createAccountWithUsername(sessionClient, {
-        username: usernameInput,
-        metadataUri: metadataUri,
-      });
-
-      if (result.isErr()) {
-        const errorValue = result.error;
-        console.error('Error preparing create profile transaction data:', errorValue);
-        const reason =
-          typeof errorValue === 'object' && errorValue !== null && 'reason' in errorValue
-            ? String(errorValue.reason)
-            : 'Unknown error';
-        throw new Error(`Failed to prepare profile creation: ${reason}`);
-      }
-
-      return result.value;
-    } catch (error) {
-      console.error('Error in prepareCreateProfileTransaction:', error);
-      if (error instanceof Error) throw error;
-      throw new Error('Failed to prepare profile creation transaction');
     }
+
+    // 3. Wait for transaction to be indexed
+    const indexResult = await sessionClient.waitForTransaction(signResult.value);
+
+    if (indexResult.isErr()) {
+      return {
+        success: false,
+        error: `Transaction submitted but indexing failed: ${indexResult.error.message}`,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Unexpected error creating username:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
   }
 }
-
-export const lensProtocolService = new LensProtocolService();
