@@ -3,10 +3,9 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { XLoginButton } from '@/components/auth/XLoginButton';
-import { ConnectWalletWrapper } from '@/components/auth/ConnectWalletWrapper';
-import Threads from '@/components/ui/backgroundThreads';
 import { useEffect } from 'react';
 import { useXAuth } from '@/contexts/XAuthProvider';
+import Threads from '@/components/ui/backgroundThreads';
 
 export default function HomePage() {
   const router = useRouter();
@@ -111,18 +110,7 @@ export default function HomePage() {
             </motion.p>
 
             <motion.div className='pt-8 space-y-4' variants={buttonVariants}>
-              <XLoginButton variant='purple' className='w-full' />
-
-              <div className='relative'>
-                <div className='absolute inset-0 flex items-center'>
-                  <div className='w-full border-t border-white/10'></div>
-                </div>
-                <div className='relative flex justify-center text-xs'>
-                  <span className='px-2 bg-black/30 text-white/50'>or</span>
-                </div>
-              </div>
-
-              <ConnectWalletWrapper variant='purple' className='w-full' />
+              <XLoginButton className='w-full' />
             </motion.div>
           </div>
         </motion.div>

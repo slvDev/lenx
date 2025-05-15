@@ -26,14 +26,22 @@ export function XLoginButton({ className = '', variant = 'primary' }: XLoginButt
     </svg>
   );
 
+  let buttonLabel = 'Disconnect from X';
+  let buttonVariant = variant;
+
+  if (isXAuthenticated && !xHandle) {
+    buttonLabel = 'No handle detected - Disconnect';
+    buttonVariant = 'warning';
+  }
+
   return (
     <LoginButton
       className={className}
-      variant={variant}
+      variant={buttonVariant}
       icon={XIcon}
       isLoading={isLoadingXAuth}
       isAuthenticated={isXAuthenticated}
-      authenticatedLabel={xHandle ? `@${xHandle}` : undefined}
+      authenticatedLabel={buttonLabel}
       defaultLabel='Login with X'
       onClick={handleClick}
     />
