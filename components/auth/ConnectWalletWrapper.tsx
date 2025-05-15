@@ -1,12 +1,12 @@
 'use client';
 
 import { ConnectKitButton, useModal } from 'connectkit';
-import { LoginButton } from './LoginButton';
+import { LoginButton, LoginButtonVariant } from './LoginButton';
 import { useAccount } from 'wagmi';
 
 interface ConnectWalletWrapperProps {
   className?: string;
-  variant?: 'primary' | 'secondary';
+  variant?: LoginButtonVariant;
 }
 
 export function ConnectWalletWrapper({ className = '', variant = 'primary' }: ConnectWalletWrapperProps) {

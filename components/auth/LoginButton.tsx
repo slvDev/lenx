@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-export type LoginButtonVariant = 'primary' | 'secondary';
+export type LoginButtonVariant = 'primary' | 'secondary' | 'purple';
 export type LoginButtonSize = 'sm' | 'md' | 'lg';
 
 interface LoginButtonProps {
@@ -42,11 +42,13 @@ export function LoginButton({
   const variantClasses = {
     primary: 'bg-black text-white hover:bg-gray-800 focus:ring-black',
     secondary: 'bg-white text-black border border-gray-200 hover:bg-gray-50 focus:ring-gray-200',
+    purple:
+      'bg-purple-600 text-white hover:bg-purple-700 shadow-lg shadow-purple-500/30 border-none focus:ring-purple-500',
   };
 
   // Base classes
   const baseClasses =
-    'inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+    'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   // Animation variants
   const buttonVariants = {

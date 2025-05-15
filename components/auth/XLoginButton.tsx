@@ -1,11 +1,11 @@
 'use client';
 
 import { useXAuth } from '@/contexts/XAuthProvider';
-import { LoginButton } from './LoginButton';
+import { LoginButton, LoginButtonVariant } from './LoginButton';
 
 interface XLoginButtonProps {
   className?: string;
-  variant?: 'primary' | 'secondary';
+  variant?: LoginButtonVariant;
 }
 
 export function XLoginButton({ className = '', variant = 'primary' }: XLoginButtonProps) {
