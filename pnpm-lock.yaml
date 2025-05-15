@@ -35,6 +35,9 @@ dependencies:
   next-auth:
     specifier: ^4.24.11
     version: 4.24.11(next@15.3.2)(react-dom@19.1.0)(react@19.1.0)
+  ogl:
+    specifier: ^1.0.11
+    version: 1.0.11
   react:
     specifier: ^19.0.0
     version: 19.1.0
@@ -3940,6 +3943,10 @@ packages:
       destr: 2.0.5
       node-fetch-native: 1.6.6
       ufo: 1.6.1
+    dev: false
+
+  /ogl@1.0.11:
+    resolution: {integrity: sha512-kUpC154AFfxi16pmZUK4jk3J+8zxwTWGPo03EoYA8QPbzikHoaC82n6pNTbd+oEaJonaE8aPWBlX7ad9zrqLsA==}
     dev: false
 
   /oidc-token-hash@5.1.0:

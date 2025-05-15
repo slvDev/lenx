@@ -3,10 +3,11 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useReadContract } from 'wagmi';
 import { useXAuth } from '@/contexts/XAuthProvider';
 import { ConnectWalletWrapper } from '@/components/auth/ConnectWalletWrapper';
 import { XLoginButton } from '@/components/auth/XLoginButton';
+import { LENS_GLOBAL_NAMESPACE_ADDRESS, LENS_GLOBAL_NAMESPACE_ABI } from '@/lib/constants';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -14,12 +15,25 @@ export default function DashboardPage() {
   const { disconnect } = useDisconnect();
   const { isXAuthenticated, xHandle, logoutFromX } = useXAuth();
 
-  // Redirect to login if neither X nor wallet is connected
+  const {
+    data: usernameExists,
+    isLoading: isLoadingUsernameCheck,
+    refetch,
+  } = useReadContract({
+    address: LENS_GLOBAL_NAMESPACE_ADDRESS,
+    abi: LENS_GLOBAL_NAMESPACE_ABI,
+    functionName: 'exists',
+    args: xHandle ? [xHandle] : undefined,
+    query: {
+      enabled: false,
+    },
+  });
+
   useEffect(() => {
-    if (!isConnected && !isXAuthenticated) {
-      router.push('/login');
+    if (!isLoadingUsernameCheck && xHandle) {
+      refetch();
     }
-  }, [isConnected, isXAuthenticated, router]);
+  }, [isLoadingUsernameCheck, xHandle, refetch]);
 
   const handleLogoutWallet = () => {
     disconnect();
@@ -135,6 +149,27 @@ export default function DashboardPage() {
                     <span className='bg-gray-100 text-gray-800 text-xs px-2.5 py-0.5 rounded-full'>Not Linked</span>
                   )}
                 </div>
+              </div>
+
+              {/* Username availability checker */}
+              <div className='mt-6 pt-6 border-t border-gray-200'>
+                <h3 className='text-md font-medium mb-3'>Check Username Availability</h3>
+
+                {xHandle && !isLoadingUsernameCheck && (
+                  <div
+                    className={`mt-3 p-3 rounded-md ${
+                      isLoadingUsernameCheck
+                        ? 'bg-blue-50 text-blue-700'
+                        : !usernameExists
+                        ? 'bg-green-50 text-green-700'
+                        : 'bg-red-50 text-red-700'
+                    }`}
+                  >
+                    {!usernameExists && `Username "${xHandle}" is available!`}
+                    {usernameExists && `Username "${xHandle}" is already taken.`}
+                    {isLoadingUsernameCheck && 'Checking username availability...'}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -275,13 +310,30 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Placeholder for Future Profile Management UI */}
+                  {/* Profile Management UI with suggested username from X */}
                   <div className='bg-white p-6 rounded-lg border border-gray-200'>
                     <h3 className='text-lg font-medium mb-4'>Ready to Mint</h3>
                     <p className='text-gray-600 mb-4'>
                       You can now mint a Lens Profile using your X handle: @{xHandle}
                     </p>
-                    <button className='w-full px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition-colors'>
+
+                    {/* Auto-check X handle availability */}
+                    {xHandle && (
+                      <div className='mb-4 p-4 rounded-lg bg-gray-50'>
+                        <h4 className='text-sm font-medium mb-2'>Username Availability</h4>
+                        <button
+                          onClick={() => refetch()}
+                          className='w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 mb-3'
+                        >
+                          Check if @{xHandle} is available on Lens
+                        </button>
+                      </div>
+                    )}
+
+                    <button
+                      className='w-full px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition-colors'
+                      disabled={!xHandle || isLoadingUsernameCheck}
+                    >
                       Mint Lens Profile
                     </button>
                   </div>
