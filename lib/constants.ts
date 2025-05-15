@@ -32,11 +32,11 @@ export const NATIVE_GHO_ADDRESS = '0x000000000000000000000000000000000000800A';
 export const WGHO_TOKEN_ADDRESS = '0x6bDc36E20D267Ff0dd6097799f82e78907105e2F';
 export const BONSAI_TOKEN_ADDRESS = '0xB0588f9A9cADe7CD5f194a5fe77AcD6A58250f82';
 
-// ABIs (will be populated or imported later)
-// For now, can be empty arrays or imported from dedicated ABI files if they exist.
+// ABIs
 export const LENS_GLOBAL_NAMESPACE_ABI = parseAbi([
   'function accountOf(string calldata name) view returns (address)',
   'function usernameOf(address user) view returns (string)',
+  'function exists(string username) view returns (bool)',
   'error DoesNotExist()',
 ]);
 
