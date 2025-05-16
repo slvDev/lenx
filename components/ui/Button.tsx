@@ -46,19 +46,19 @@ export function Button({
   };
 
   const baseClasses =
-    'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
+    'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer';
 
   // Extend the shared buttonVariants with disabled state
   const extendedButtonVariants = {
     ...sharedButtonVariants,
-    disabled: { opacity: 0.6, cursor: 'not-allowed' },
+    disabled: { opacity: 0.6 },
     loading: { opacity: 0.8 },
   };
 
   return (
     <motion.button
       className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className} ${
-        disabled ? 'opacity-60 cursor-not-allowed' : ''
+        disabled ? 'opacity-60' : ''
       }`}
       onClick={onClick}
       onHoverStart={() => !disabled && setIsHovered(true)}
@@ -70,7 +70,6 @@ export function Button({
       disabled={disabled || isLoading}
     >
       <div className='flex items-center gap-2'>
-        {/* Icon */}
         {icon && <div className='flex-shrink-0 w-4 h-4'>{icon}</div>}
 
         {/* Button Text */}
