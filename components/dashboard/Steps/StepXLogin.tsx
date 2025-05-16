@@ -23,7 +23,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
     address: LENS_GLOBAL_NAMESPACE_ADDRESS,
     abi: LENS_GLOBAL_NAMESPACE_ABI,
     functionName: 'exists',
-    args: xHandle ? [xHandle] : undefined,
+    args: xHandle ? [xHandle.toLowerCase()] : undefined,
     query: {
       enabled: false,
     },
@@ -34,8 +34,6 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
       refetch();
     }
   }, [xHandle, refetch, isLoadingUsernameCheck]);
-
-  const canProceed = isXAuthenticated && xHandle && usernameExists === false;
 
   return (
     <motion.div variants={containerVariants} initial='hidden' animate='visible' className='w-full max-w-3xl mx-auto'>
@@ -183,7 +181,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
       <motion.div variants={itemVariants} className='flex flex-wrap justify-center items-center gap-4'>
         <XLoginButton />
 
-        {isXAuthenticated && xHandle && canProceed && <Button onClick={onComplete}>Continue</Button>}
+        {isXAuthenticated && xHandle && <Button onClick={onComplete}>Continue</Button>}
       </motion.div>
     </motion.div>
   );
