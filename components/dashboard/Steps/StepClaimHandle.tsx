@@ -2,29 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { itemVariants, iconAnimation, iconTransition } from '@/lib/animations';
-
-interface LensAccount {
-  id: string;
-  handle: string;
-  avatar: string | null;
-  selected: boolean;
-}
+import { Account } from '@lens-protocol/client';
 
 interface StepClaimHandleProps {
   xHandle?: string;
-  selectedLensAccount: string | null;
-  lensAccounts: LensAccount[];
+  selectedLensAccount: Account | null;
   onClaimHandle: () => void;
 }
 
-const StepClaimHandle: React.FC<StepClaimHandleProps> = ({
-  xHandle,
-  selectedLensAccount,
-  lensAccounts,
-  onClaimHandle,
-}) => {
-  const selectedAccount = lensAccounts.find((acc) => acc.id === selectedLensAccount);
-
+const StepClaimHandle = ({ xHandle, selectedLensAccount, onClaimHandle }: StepClaimHandleProps) => {
   return (
     <div className='flex flex-col items-center text-center'>
       <div className='mb-4 text-center w-full'>
@@ -81,7 +67,7 @@ const StepClaimHandle: React.FC<StepClaimHandleProps> = ({
                 <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z' />
               </svg>
             </div>
-            <span className='text-white font-medium'>{selectedAccount?.handle}</span>
+            <span className='text-white font-medium'>{selectedLensAccount?.username?.value}</span>
           </div>
         </div>
       </motion.div>
