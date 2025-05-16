@@ -1,16 +1,10 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type {
-  // CreateAccountWithUsernameResult, // Not used for now
-  // EvmAddress, // Not used for now
-  SessionClient as LensSessionClientType, // Might be needed by consumers later
-  // URI, // Not used for now
-} from '@lens-protocol/client';
+import { mainnet, PublicClient } from '@lens-protocol/client';
 
-// Minimal context type for now
 interface LensProfileContextType {
-  // Placeholder for future properties
+  publicClient: PublicClient;
   // profile: null; // Example
   // isLoadingProfile: boolean;
   // clearProfileError: () => void;
@@ -20,10 +14,13 @@ interface LensProfileContextType {
 const LensProfileContext = createContext<LensProfileContextType | undefined>(undefined);
 
 export function LensProfileProvider({ children }: { children: React.ReactNode }) {
-  // No state or effects for now
+  const publicClient = PublicClient.create({
+    environment: mainnet,
+    // storage: window.localStorage,
+  });
 
-  // Minimal context value
   const value: LensProfileContextType = {
+    publicClient,
     // Initialize with placeholder values or functions if needed
     // profile: null,
     // isLoadingProfile: false,
