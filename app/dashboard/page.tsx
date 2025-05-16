@@ -25,7 +25,7 @@ const STEPS = ['X Login', 'Connect Wallet', 'Select Profile', 'Claim Handle'];
 export default function DashboardPage() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const { isXAuthenticated, xHandle, logoutFromX, isLoadingXAuth } = useXAuth();
+  const { isXAuthenticated, xHandle, isLoadingXAuth } = useXAuth();
   const accountsRef = useRef<HTMLDivElement>(null);
 
   // State to manage the user's Lens accounts

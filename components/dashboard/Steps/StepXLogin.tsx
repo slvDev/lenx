@@ -126,8 +126,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
                 <div>
                   <p className='font-medium mb-1'>Handle Already Claimed</p>
                   <p className='text-sm'>
-                    Your X handle @{xHandle} has already been claimed on Lens. Please connect with the wallet that owns
-                    this Lens handle to proceed.
+                    @{xHandle} is already taken on Lens. Connect with the wallet that owns it to proceed.
                   </p>
                 </div>
               </div>
@@ -150,8 +149,8 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
               What you're doing
             </h3>
             <p className='text-white/70 text-sm leading-relaxed'>
-              This app provides a streamlined onboarding experience to the Lens Protocol. We use your X handle as a
-              suggestion when minting your Lens Profile, creating a consistent identity across platforms.
+              This app helps you join Lens Protocol. We'll use your X handle to create your Lens username and send it to
+              your Lens account.
             </p>
           </div>
 
@@ -165,15 +164,15 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
             <ul className='space-y-2 text-white/70 text-sm'>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Connect your X account to use your handle for your Lens profile</span>
+                <span>Connect X to get your handle</span>
               </li>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Connect your crypto wallet to authorize blockchain actions</span>
+                <span>Connect your wallet and fetch your Lens account</span>
               </li>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Manage your Lens Profile as a smart account for dApp interactions</span>
+                <span>Send your X handle to selected Lens account</span>
               </li>
             </ul>
           </div>
