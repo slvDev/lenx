@@ -17,6 +17,7 @@ import { handleOperationWith } from '@lens-protocol/client/viem';
 import { useWalletClient } from 'wagmi';
 import { LENX_NAMESPACE_ADDRESS } from '@/lib/constants';
 import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
+import Socials from '@/components/dashboard/Socials';
 
 const STEPS = ['X Login', 'Connect Wallet', 'Claim Handle'];
 
@@ -141,8 +142,12 @@ export default function DashboardPage() {
 
   return (
     <div className='min-h-screen bg-black flex flex-col items-center pt-8 pb-20 relative overflow-hidden'>
+      <div className='fixed top-3 right-3 z-50'>
+        <Socials />
+      </div>
+
       <div className='absolute inset-0 z-0'>
-        <Threads amplitude={1.2} distance={0.5} color={[0.6, 0.3, 0.9]} enableMouseInteraction={true} />
+        <Threads amplitude={1.2} distance={0} color={[0.6, 0.3, 0.9]} enableMouseInteraction={true} />
       </div>
 
       <AnimatePresence>
