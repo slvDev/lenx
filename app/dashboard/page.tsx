@@ -26,6 +26,10 @@ const roadmapItems = [
     implemented: true,
   },
   {
+    text: 'Creation of Lens Profile if User does not have one.',
+    implemented: false,
+  },
+  {
     text: "Sync user's X posts with their Lens Account feed.",
     implemented: false,
   },
