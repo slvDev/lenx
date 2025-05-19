@@ -2,8 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useEffect, useState } from 'react';
 import { useXAuth } from '@/contexts/XAuthProvider';
 import Threads from '@/components/ui/backgroundThreads';
 import Spinner from '@/components/ui/Spinner';
@@ -82,13 +81,13 @@ export default function DashboardPage() {
         <div className='bg-black/20 backdrop-blur-md p-8 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/5'>
           <AnimatePresence mode='wait'>
             {currentStep === 1 && (
-              <StepContent key='step-1' currentStep={currentStep} step={1}>
+              <StepContent key='step-1'>
                 <StepXLogin onComplete={() => setCurrentStep(2)} />
               </StepContent>
             )}
 
             {currentStep === 2 && (
-              <StepContent key='step-2' currentStep={currentStep} step={2}>
+              <StepContent key='step-2'>
                 <StepConnectWallet
                   xHandle={xHandle || ''}
                   selectedLensAccount={selectedLensAccount}
@@ -101,7 +100,7 @@ export default function DashboardPage() {
             )}
 
             {currentStep === 3 && (
-              <StepContent key='step-3' currentStep={currentStep} step={4}>
+              <StepContent key='step-3'>
                 <StepClaimHandle
                   xHandle={xHandle || ''}
                   selectedLensAccount={selectedLensAccount}

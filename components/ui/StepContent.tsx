@@ -1,17 +1,13 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { stepContentVariants, stepContentTransition } from '@/lib/animations';
 
 interface StepContentProps {
   children: ReactNode;
-  currentStep: number;
-  step: number;
   className?: string;
 }
 
-const StepContent: React.FC<StepContentProps> = ({ children, currentStep, step, className = '' }) => {
-  if (currentStep !== step) return null;
-
+const StepContent = ({ children, className = '' }: StepContentProps) => {
   return (
     <motion.div
       initial='initial'
