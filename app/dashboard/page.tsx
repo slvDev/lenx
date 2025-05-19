@@ -221,35 +221,40 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      <motion.div
-        className='w-full max-w-5xl z-10 px-4 mt-12'
-        initial='hidden'
-        animate='visible'
-        variants={containerVariants}
-      >
+      {currentStep == 1 && (
         <motion.div
-          variants={cardVariants}
-          className='bg-black/20 backdrop-blur-md p-8 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/5'
+          className='w-full max-w-5xl z-10 px-4 mt-12'
+          initial='hidden'
+          animate='visible'
+          variants={containerVariants}
         >
-          <h2 className='text-2xl font-bold text-white mb-6 text-center bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
-            Roadmap
-          </h2>
-          <ul className='space-y-4'>
-            {roadmapItems.map((item, index) => (
-              <li key={index} className='flex items-center p-4 bg-purple-500/10 rounded-lg border border-purple-500/30'>
-                <div className='flex-shrink-0 mr-3'>
-                  {item.implemented ? (
-                    <CheckCircleIcon className='w-6 h-6 text-green-400' />
-                  ) : (
-                    <ClockIcon className='w-6 h-6 text-gray-500' />
-                  )}
-                </div>
-                <span className={`text-sm ${item.implemented ? 'text-white' : 'text-white/70'}`}>{item.text}</span>
-              </li>
-            ))}
-          </ul>
+          <motion.div
+            variants={cardVariants}
+            className='bg-black/20 backdrop-blur-md p-8 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/5'
+          >
+            <h2 className='text-2xl font-bold text-white mb-6 text-center bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
+              Roadmap
+            </h2>
+            <ul className='space-y-4'>
+              {roadmapItems.map((item, index) => (
+                <li
+                  key={index}
+                  className='flex items-center p-4 bg-purple-500/10 rounded-lg border border-purple-500/30'
+                >
+                  <div className='flex-shrink-0 mr-3'>
+                    {item.implemented ? (
+                      <CheckCircleIcon className='w-6 h-6 text-green-400' />
+                    ) : (
+                      <ClockIcon className='w-6 h-6 text-gray-500' />
+                    )}
+                  </div>
+                  <span className={`text-sm ${item.implemented ? 'text-white' : 'text-white/70'}`}>{item.text}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </div>
   );
 }
