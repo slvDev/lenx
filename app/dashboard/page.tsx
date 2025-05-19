@@ -11,7 +11,7 @@ import StepContent from '@/components/ui/StepContent';
 import { StepXLogin, StepConnectWallet, StepClaimHandle } from '@/components/dashboard/Steps';
 import { containerVariants, cardVariants, confettiVariants, confettiTransition } from '@/lib/animations';
 import { Account, evmAddress } from '@lens-protocol/client';
-import { createUsername } from '@lens-protocol/client/actions';
+import { canCreateUsername, createUsername } from '@lens-protocol/client/actions';
 import { useLensProfile } from '@/contexts/LensProfileProvider';
 import { handleOperationWith } from '@lens-protocol/client/viem';
 import { useWalletClient } from 'wagmi';
@@ -59,24 +59,56 @@ export default function DashboardPage() {
     }
 
     setIsClaimingHandle(true);
-    try {
-      await createUsername(sessionClient, {
-        username: {
-          localName: `${xHandle.toLowerCase()}`,
-          namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
-        },
-        autoAssign: true,
-      })
-        .andThen(handleOperationWith(walletClient))
-        .andThen(sessionClient.waitForTransaction);
+    const canCreateResult = await canCreateUsername(sessionClient, {
+      localName: `${xHandle.toLowerCase()}`,
+      namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
+    });
 
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    } catch (error) {
-      alert(`Error claiming handle: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
+    if (canCreateResult.isErr()) {
+      alert(`Error claiming handle: ${canCreateResult.error.value}`);
       setIsClaimingHandle(false);
+      return;
     }
+
+    switch (canCreateResult.value.__typename) {
+      case 'NamespaceOperationValidationPassed':
+        break;
+
+      case 'NamespaceOperationValidationFailed':
+        alert(`Cannot create handle: ${canCreateResult.value.reason}`);
+        setIsClaimingHandle(false);
+        return;
+
+      case 'NamespaceOperationValidationUnknown':
+        alert('Validation outcome is unknown');
+        setIsClaimingHandle(false);
+        return;
+
+      case 'UsernameTaken':
+        alert(`Username ${xHandle.toLowerCase()} is already taken`);
+        setIsClaimingHandle(false);
+        return;
+    }
+
+    const result = await createUsername(sessionClient, {
+      username: {
+        localName: `${xHandle.toLowerCase()}`,
+        namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
+      },
+      autoAssign: true,
+    })
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction);
+
+    if (result.isErr()) {
+      alert(`Error claiming handle: ${result.error.value}`);
+      setIsClaimingHandle(false);
+      return;
+    }
+
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
+    setIsClaimingHandle(false);
   };
 
   if (isLoadingXAuth || !isXAuthenticated) {
