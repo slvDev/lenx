@@ -130,6 +130,7 @@ export default function DashboardPage() {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 3000);
     setIsClaimingHandle(false);
+    window.location.reload();
   };
 
   if (isLoadingXAuth || !isXAuthenticated) {
