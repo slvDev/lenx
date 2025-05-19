@@ -4,7 +4,7 @@ import { FaGithub, FaLeaf } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
 const Socials = () => {
-  const githubUrl = 'https://github.com/your-repo';
+  const githubUrl = 'https://github.com/slvDev/lenx';
   const xProfileUrl = 'https://x.com/slvDev';
   const lensProfileUrl = 'https://hey.xyz/u/slvdev';
 

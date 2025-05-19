@@ -86,7 +86,7 @@ export default function DashboardPage() {
     });
 
     if (canCreateResult.isErr()) {
-      alert(`Error claiming handle: ${canCreateResult.error.value}`);
+      alert(`Error claiming handle: ${canCreateResult.error.message}`);
       setIsClaimingHandle(false);
       return;
     }
@@ -118,11 +118,13 @@ export default function DashboardPage() {
       },
       autoAssign: true,
     })
+      // @ts-ignore
       .andThen(handleOperationWith(walletClient))
+      // @ts-ignore
       .andThen(sessionClient.waitForTransaction);
 
     if (result.isErr()) {
-      alert(`Error claiming handle: ${result.error.value}`);
+      alert(`Error claiming handle`);
       setIsClaimingHandle(false);
       return;
     }

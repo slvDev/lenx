@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useXAuth } from '@/contexts/XAuthProvider';
 import Spinner from '@/components/ui/Spinner';
 import Threads from '@/components/ui/backgroundThreads';
 
-export default function XAuthCallbackPage() {
+function XAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { handleXAuthCallback, isLoadingXAuth } = useXAuth();
@@ -15,7 +15,6 @@ export default function XAuthCallbackPage() {
   const isProcessing = useRef(false);
 
   useEffect(() => {
-    // Prevent duplicate callback handling
     if (hasHandledCallback.current || isProcessing.current) {
       return;
     }
@@ -24,35 +23,25 @@ export default function XAuthCallbackPage() {
     const state = searchParams.get('state');
 
     if (!code || !state) {
-      router.replace('/login?error=invalid_callback');
+      router.replace('/');
       return;
     }
+
     isProcessing.current = true;
     hasHandledCallback.current = true;
 
-    // Handle the callback
     handleXAuthCallback()
       .then(() => {
-        // Clear the URL parameters after successful handling
         router.replace('/dashboard');
       })
-      .catch((error) => {
-        router.replace('/login?error=auth_failed');
+      .catch(() => {
+        router.replace(`/`);
       })
       .finally(() => {
         isProcessing.current = false;
       });
-
-    // Cleanup function
-    return () => {
-      // Only reset if we're not in the middle of processing
-      if (!isProcessing.current) {
-        hasHandledCallback.current = false;
-      }
-    };
   }, [searchParams, router, handleXAuthCallback]);
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,7 +68,6 @@ export default function XAuthCallbackPage() {
 
   return (
     <div className='min-h-screen bg-black flex items-center justify-center relative overflow-hidden'>
-      {/* Background */}
       <div className='absolute inset-0 z-0'>
         <Threads amplitude={1.2} distance={0.5} color={[0.6, 0.3, 0.9]} enableMouseInteraction={true} />
       </div>
@@ -90,7 +78,6 @@ export default function XAuthCallbackPage() {
         animate='visible'
         variants={containerVariants}
       >
-        {/* X Logo */}
         <motion.div
           className='w-20 h-20 mx-auto mb-6 bg-purple-500/30 rounded-full flex items-center justify-center'
           variants={itemVariants}
@@ -100,18 +87,16 @@ export default function XAuthCallbackPage() {
           </svg>
         </motion.div>
 
-        {/* Status Message */}
         <motion.h1 className='text-2xl font-bold text-white mb-4' variants={itemVariants}>
-          {isLoadingXAuth ? 'Completing X Login...' : 'Redirecting...'}
+          {isLoadingXAuth ? 'Completing X Login...' : 'Processing Callback...'}
         </motion.h1>
 
         <motion.p className='text-white/70 mb-8' variants={itemVariants}>
           {isLoadingXAuth ? 'Please wait while we complete your X login' : 'Taking you back to the dashboard'}
         </motion.p>
 
-        {/* Loading State */}
         <motion.div className='flex flex-col items-center' variants={itemVariants}>
-          {isLoadingXAuth && (
+          {(isLoadingXAuth || isProcessing.current) && (
             <>
               <Spinner color='purple' size='medium' className='mb-4' />
               <motion.div className='w-full h-1 bg-black/30 rounded-full overflow-hidden mt-6'>
@@ -119,7 +104,7 @@ export default function XAuthCallbackPage() {
                   className='h-full bg-gradient-to-r from-purple-500 to-purple-700'
                   initial={{ width: '0%' }}
                   animate={{ width: '100%' }}
-                  transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity }}
+                  transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity, repeatType: 'loop' }}
                 />
               </motion.div>
             </>
@@ -127,5 +112,20 @@ export default function XAuthCallbackPage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function XAuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className='min-h-screen bg-black flex flex-col items-center justify-center text-white'>
+          <Spinner color='purple' size='large' />
+          <p className='mt-4 text-lg'>Loading X Authentication...</p>
+        </div>
+      }
+    >
+      <XAuthCallbackContent />
+    </Suspense>
   );
 }
