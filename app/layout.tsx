@@ -6,8 +6,8 @@ import { Providers } from '@/components/providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'HugLens - Lens Profile X-Handle Onboarding',
-  description: 'Create and manage your Lens Profile with your X handle',
+  title: 'LenX',
+  description: 'Link your X handle to your Lens profile',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
