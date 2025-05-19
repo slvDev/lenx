@@ -19,6 +19,21 @@ import { LENX_NAMESPACE_ADDRESS } from '@/lib/constants';
 
 const STEPS = ['X Login', 'Connect Wallet', 'Claim Handle'];
 
+const ClaimingHandlePopup = () => (
+  <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
+    <motion.div
+      variants={cardVariants}
+      initial='hidden'
+      animate='visible'
+      exit='exit'
+      className='bg-purple-900/30 border border-purple-500/50 p-8 rounded-xl shadow-xl text-center'
+    >
+      <h3 className='text-xl font-semibold text-white mb-4'>Processing Your Claim</h3>
+      <p className='text-white/70 mb-6'>Waiting for transaction confirmation...</p>
+    </motion.div>
+  </div>
+);
+
 export default function DashboardPage() {
   const router = useRouter();
   const { isXAuthenticated, xHandle, isLoadingXAuth } = useXAuth();
@@ -30,6 +45,7 @@ export default function DashboardPage() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isClaimingHandle, setIsClaimingHandle] = useState(false);
 
   useEffect(() => {
     if (!isLoadingXAuth && !isXAuthenticated) {
@@ -38,20 +54,29 @@ export default function DashboardPage() {
   }, [isXAuthenticated, isLoadingXAuth, router]);
 
   const handleClaimHandle = async () => {
-    if (!xHandle) return;
+    if (!xHandle || !sessionClient || !walletClient) {
+      return;
+    }
 
-    await createUsername(sessionClient, {
-      username: {
-        localName: `${xHandle.toLowerCase()}`,
-        namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
-      },
-      autoAssign: true,
-    })
-      .andThen(handleOperationWith(walletClient))
-      .andThen(sessionClient.waitForTransaction);
+    setIsClaimingHandle(true);
+    try {
+      await createUsername(sessionClient, {
+        username: {
+          localName: `${xHandle.toLowerCase()}`,
+          namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
+        },
+        autoAssign: true,
+      })
+        .andThen(handleOperationWith(walletClient))
+        .andThen(sessionClient.waitForTransaction);
 
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    } catch (error) {
+      alert(`Error claiming handle: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsClaimingHandle(false);
+    }
   };
 
   if (isLoadingXAuth || !isXAuthenticated) {
@@ -68,22 +93,27 @@ export default function DashboardPage() {
         <Threads amplitude={1.2} distance={0.5} color={[0.6, 0.3, 0.9]} enableMouseInteraction={true} />
       </div>
 
-      {/* Confetti effect hen claiming is successful */}
-      {showConfetti && (
-        <div className='fixed inset-0 z-50 pointer-events-none'>
-          <div className='absolute inset-0 flex items-center justify-center'>
-            <motion.div
-              variants={confettiVariants}
-              initial='hidden'
-              animate='visible'
-              transition={confettiTransition}
-              className='text-8xl'
-            >
-              🎉
-            </motion.div>
+      <AnimatePresence>
+        {showConfetti && (
+          <div className='fixed inset-0 z-[60] pointer-events-none'>
+            {' '}
+            <div className='absolute inset-0 flex items-center justify-center'>
+              <motion.div
+                variants={confettiVariants}
+                initial='hidden'
+                animate='visible'
+                exit='exit'
+                transition={confettiTransition}
+                className='text-8xl'
+              >
+                🎉
+              </motion.div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>{isClaimingHandle && <ClaimingHandlePopup />}</AnimatePresence>
 
       <motion.div
         className='w-full max-w-5xl z-10 px-4'
@@ -123,6 +153,7 @@ export default function DashboardPage() {
                   xHandle={xHandle || ''}
                   selectedLensAccount={selectedLensAccount}
                   onClaimHandle={handleClaimHandle}
+                  isProcessing={isClaimingHandle}
                 />
               </StepContent>
             )}
