@@ -122,7 +122,7 @@ Contributions are welcome! Whether it's bug fixes, feature suggestions, or impro
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details (assuming MIT, common for such projects).
+This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
 
 ---
 
