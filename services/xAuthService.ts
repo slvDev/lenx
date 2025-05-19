@@ -19,10 +19,7 @@ interface TokenResponse {
 const X_AUTH_BASE_URL = 'https://twitter.com/i/oauth2/authorize';
 const X_TOKEN_URL = '/api/auth/x/token'; // Our Next.js API route for token exchange
 const X_USER_INFO_URL = '/api/auth/x/user'; // Our Next.js API route for user info
-const REDIRECT_URI =
-  typeof window !== 'undefined'
-    ? `${window.location.origin}/api/auth/x/callback`
-    : 'http://localhost:3000/api/auth/x/callback';
+const REDIRECT_URI = process.env.NEXT_PUBLIC_APP_URL + '/api/auth/x/callback';
 
 // --- Main Service Functions ---
 

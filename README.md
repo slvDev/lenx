@@ -49,7 +49,7 @@ LenX aims to bridge the gap between the Web2 social experience you know and the 
     - This wallet should be the **Owner EOA** of your Lens Account.
     - Choose which Lens Account to use if wallet controls many
 
-3.  **Step 4: Link your X Handle to Lens Account**
+3.  **Step 3: Link your X Handle to Lens Account**
 
 ---
 
@@ -99,6 +99,7 @@ LenX is currently an MVP, focused on the core X-to-Lens linking. Here's what's o
     Create a `.env.local` file in the root and add your API keys and configurations:
 
     ```env
+    NEXT_PUBLIC_APP_URL=
     NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
     NEXT_PUBLIC_X_CLIENT_ID=
     X_CLIENT_SECRET=
