@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useXAuth } from '@/contexts/XAuthProvider';
 import { XLoginButton } from '@/components/auth/XLoginButton';
 import { useReadContract } from 'wagmi';
-import { LENX_NAMESPACE_ADDRESS, LENS_GLOBAL_NAMESPACE_ABI } from '@/lib/constants';
+import { LENX_NAMESPACE_ADDRESS, LENS_GLOBAL_NAMESPACE_ABI, LENS_GLOBAL_NAMESPACE_ADDRESS } from '@/lib/constants';
 import { useEffect } from 'react';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
@@ -29,29 +29,62 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
     },
   });
 
+  const {
+    data: accountOf,
+    isLoading: isLoadingAccountOf,
+    refetch: refetchAccountOf,
+  } = useReadContract({
+    address: LENX_NAMESPACE_ADDRESS,
+    abi: LENS_GLOBAL_NAMESPACE_ABI,
+    functionName: 'accountOf',
+    args: xHandle ? [xHandle.toLowerCase()] : undefined,
+    query: {
+      enabled: false,
+    },
+  });
+
+  const {
+    data: heyHandle,
+    isLoading: isLoadingHeyHandle,
+    refetch: refetchHeyHandle,
+  } = useReadContract({
+    address: LENS_GLOBAL_NAMESPACE_ADDRESS,
+    abi: LENS_GLOBAL_NAMESPACE_ABI,
+    functionName: 'usernameOf',
+    args: accountOf ? [accountOf] : undefined,
+    query: {
+      enabled: false,
+    },
+  });
+
   useEffect(() => {
     if (xHandle && !isLoadingUsernameCheck) {
       refetch();
     }
   }, [xHandle, refetch, isLoadingUsernameCheck]);
 
+  useEffect(() => {
+    if (usernameExists) {
+      refetchAccountOf();
+    }
+  }, [usernameExists, refetchAccountOf]);
+
+  useEffect(() => {
+    if (accountOf) {
+      refetchHeyHandle();
+    }
+  }, [accountOf, refetchHeyHandle]);
+
   const canProceed = isXAuthenticated && xHandle && !usernameExists;
 
   return (
     <motion.div variants={containerVariants} initial='hidden' animate='visible' className='w-full max-w-3xl mx-auto'>
-      {/* Header Section with Handle Status */}
       <motion.div variants={itemVariants} className='mb-8 text-center'>
         <h2 className='text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
-          {isXAuthenticated && xHandle ? `Ready to claim @${xHandle.toLowerCase()} on Lens?` : 'Connect your X account'}
+          {xHandle ? `Ready to claim @x/${xHandle.toLowerCase()} on Lens?` : 'Connect your X account'}
         </h2>
-        <p className='mt-2 text-white/70'>
-          {isXAuthenticated && xHandle
-            ? "Let's check if your handle is available to claim"
-            : "We'll use your X handle to create your Lens profile"}
-        </p>
       </motion.div>
 
-      {/* Status Messages */}
       {!xHandle && isXAuthenticated && (
         <motion.div
           variants={itemVariants}
@@ -76,14 +109,14 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
         </motion.div>
       )}
 
-      {isLoadingUsernameCheck && xHandle ? (
+      {isLoadingUsernameCheck ? (
         <motion.div variants={itemVariants} className='mb-6 p-6 flex flex-col items-center'>
           <Spinner color='purple' size='large' />
           <p className='mt-4 text-white/70'>Checking handle availability...</p>
         </motion.div>
       ) : (
         <>
-          {isXAuthenticated && xHandle && usernameExists === false && (
+          {isXAuthenticated && xHandle && !usernameExists && (
             <motion.div
               variants={itemVariants}
               className='mb-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 text-green-400 rounded-lg'
@@ -107,10 +140,10 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
             </motion.div>
           )}
 
-          {isXAuthenticated && xHandle && usernameExists === true && (
+          {isXAuthenticated && xHandle && usernameExists && (
             <motion.div
               variants={itemVariants}
-              className='mb-6 p-4 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 text-amber-400 rounded-lg'
+              className='mb-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 text-green-400 rounded-lg'
             >
               <div className='flex items-start'>
                 <div className='mr-3 mt-1'>
@@ -119,15 +152,46 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
                       strokeLinecap='round'
                       strokeLinejoin='round'
                       strokeWidth={2}
-                      d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                      d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                     />
                   </svg>
                 </div>
                 <div>
-                  <p className='font-medium mb-1'>Handle Already Claimed</p>
-                  <p className='text-sm'>
-                    @{xHandle} is already taken on Lens. Connect with the wallet that owns it to proceed.
+                  <p className='font-medium mb-1'>
+                    Congratulations! Your @x/{xHandle?.toLowerCase()} is Already Claimed
                   </p>
+                  <div className='text-sm space-y-1 mt-2'>
+                    {isLoadingAccountOf || isLoadingHeyHandle ? (
+                      <div className='flex items-center'>
+                        <Spinner color='purple' size='small' className='mr-2' />
+                        <span>Loading owner details...</span>
+                      </div>
+                    ) : accountOf ? (
+                      <>
+                        <p>
+                          Linked to Lens account:{' '}
+                          <span className='font-mono text-xs bg-black/20 px-1 py-0.5 rounded'>{String(accountOf)}</span>
+                        </p>
+                        {heyHandle ? (
+                          <p>
+                            View on Hey:{' '}
+                            <a
+                              href={`https://hey.xyz/u/${heyHandle}`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className='text-purple-400 hover:text-purple-300 underline'
+                            >
+                              @{heyHandle}
+                            </a>
+                          </p>
+                        ) : (
+                          <p className='text-white/70'>(Lens username not found for this account on Hey.xyz)</p>
+                        )}
+                      </>
+                    ) : (
+                      <p className='text-white/70'>Could not determine the Lens account it's linked to.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -135,7 +199,6 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
         </>
       )}
 
-      {/* Info Section */}
       <motion.div
         variants={itemVariants}
         className='mb-8 bg-purple-900/20 backdrop-blur-sm border border-purple-500/30 rounded-xl p-6'
@@ -179,7 +242,6 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
         </div>
       </motion.div>
 
-      {/* Action Buttons */}
       <motion.div variants={itemVariants} className='flex flex-wrap justify-center items-center gap-4'>
         <XLoginButton />
 
