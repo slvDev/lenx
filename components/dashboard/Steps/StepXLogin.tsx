@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useXAuth } from '@/contexts/XAuthProvider';
 import { XLoginButton } from '@/components/auth/XLoginButton';
 import { useReadContract } from 'wagmi';
-import { LENS_GLOBAL_NAMESPACE_ADDRESS, LENS_GLOBAL_NAMESPACE_ABI } from '@/lib/constants';
+import { LENX_NAMESPACE_ADDRESS, LENS_GLOBAL_NAMESPACE_ABI } from '@/lib/constants';
 import { useEffect } from 'react';
 import Spinner from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/Button';
@@ -20,7 +20,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
     isLoading: isLoadingUsernameCheck,
     refetch,
   } = useReadContract({
-    address: LENS_GLOBAL_NAMESPACE_ADDRESS,
+    address: LENX_NAMESPACE_ADDRESS,
     abi: LENS_GLOBAL_NAMESPACE_ABI,
     functionName: 'exists',
     args: xHandle ? [xHandle.toLowerCase()] : undefined,
@@ -35,12 +35,14 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
     }
   }, [xHandle, refetch, isLoadingUsernameCheck]);
 
+  const canProceed = isXAuthenticated && xHandle && !usernameExists;
+
   return (
     <motion.div variants={containerVariants} initial='hidden' animate='visible' className='w-full max-w-3xl mx-auto'>
       {/* Header Section with Handle Status */}
       <motion.div variants={itemVariants} className='mb-8 text-center'>
         <h2 className='text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
-          {isXAuthenticated && xHandle ? `Ready to claim @${xHandle} on Lens?` : 'Connect your X account'}
+          {isXAuthenticated && xHandle ? `Ready to claim @${xHandle.toLowerCase()} on Lens?` : 'Connect your X account'}
         </h2>
         <p className='mt-2 text-white/70'>
           {isXAuthenticated && xHandle
@@ -181,7 +183,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
       <motion.div variants={itemVariants} className='flex flex-wrap justify-center items-center gap-4'>
         <XLoginButton />
 
-        {isXAuthenticated && xHandle && <Button onClick={onComplete}>Continue</Button>}
+        {isXAuthenticated && xHandle && canProceed && <Button onClick={onComplete}>Continue</Button>}
       </motion.div>
     </motion.div>
   );
