@@ -25,10 +25,10 @@ export const lensChain = defineChain({
   testnet: false,
 });
 
-// Contract Addresses from Spec.technical.md (placeholders if not exact)
-// These might need to be updated with actual deployed addresses
-export const LENS_GLOBAL_NAMESPACE_ADDRESS = '0x1aA55B9042f08f45825dC4b651B64c9F98Af4615';
+export const LENX_APP_ADDRESS = '0xBf721C827b43a3187EbE5752b5D5701a61c120b2';
 export const LENX_NAMESPACE_ADDRESS = '0x663c8E050e161580C8986DBd247efBAa265fE2cd';
+
+export const LENS_GLOBAL_NAMESPACE_ADDRESS = '0x1aA55B9042f08f45825dC4b651B64c9F98Af4615';
 export const NATIVE_GHO_ADDRESS = '0x000000000000000000000000000000000000800A';
 export const WGHO_TOKEN_ADDRESS = '0x6bDc36E20D267Ff0dd6097799f82e78907105e2F';
 export const BONSAI_TOKEN_ADDRESS = '0xB0588f9A9cADe7CD5f194a5fe77AcD6A58250f82';

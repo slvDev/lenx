@@ -13,7 +13,7 @@ interface StepXLoginProps {
 }
 
 const StepXLogin = ({ onComplete }: StepXLoginProps) => {
-  const { xHandle, isXAuthenticated, logoutFromX } = useXAuth();
+  const { xHandle, isXAuthenticated } = useXAuth();
 
   const {
     data: usernameExists,
