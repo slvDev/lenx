@@ -30,7 +30,7 @@ const StepClaimHandle = ({ xHandle, selectedLensAccount, onClaimHandle, isProces
                   <path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' />
                 </svg>
               </div>
-              <span className='text-white font-medium text-lg'>@lenx/{xHandle?.toLowerCase()}</span>
+              <span className='text-white font-medium text-lg'>@x/{xHandle?.toLowerCase()}</span>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ const StepClaimHandle = ({ xHandle, selectedLensAccount, onClaimHandle, isProces
           </div>
 
           <div>
-            <p className='text-sm text-white/70 mb-1'>Target Lens Profile:</p>
+            <p className='text-sm text-white/70 mb-1'>Target Lens Account:</p>
             <div className='flex items-center p-3 bg-black/30 rounded-lg'>
               {selectedLensAccount?.metadata?.picture ? (
                 <img
@@ -69,49 +69,34 @@ const StepClaimHandle = ({ xHandle, selectedLensAccount, onClaimHandle, isProces
 
       <motion.div variants={itemVariants} className='w-full max-w-md mx-auto text-center space-y-4'>
         <div className='flex flex-col sm:flex-row gap-4 w-full'>
-          {/* Left Button Area */}
           <div className='w-full sm:w-1/2'>
             {!isLensAuthenticated ? (
               <Button
                 onClick={() => loginWithLens(selectedLensAccount?.address)}
-                className='w-full shadow-lg shadow-green-700/20 bg-green-500 hover:bg-green-600 text-white rounded-md py-2 px-4'
                 disabled={isLoadingLensAuth}
+                variant='primary'
+                className='w-full'
               >
                 {isLoadingLensAuth ? 'Connecting...' : 'Login with Lens'}
               </Button>
             ) : (
-              <Button
-                onClick={logoutLens}
-                className='w-full shadow-lg shadow-green-700/20 bg-green-500 hover:bg-green-600 text-white rounded-md py-2 px-4'
-                disabled={isLoadingLensAuth}
-              >
+              <Button onClick={logoutLens} disabled={isLoadingLensAuth} variant='gray' className='w-full'>
                 {isLoadingLensAuth ? 'Logging out...' : 'Logout from Lens'}
               </Button>
             )}
           </div>
 
-          {/* Right Button: Claim Handle */}
-          <Button
-            onClick={onClaimHandle}
-            className='w-full sm:w-1/2 shadow-lg shadow-purple-700/20 disabled:opacity-50 disabled:cursor-not-allowed'
-            disabled={!isLensAuthenticated || isProcessing || isLoadingLensAuth || !selectedLensAccount}
-          >
-            {isProcessing ? 'Processing Linking...' : 'Link Handle'}
-          </Button>
+          <div className='w-full sm:w-1/2'>
+            <Button
+              onClick={onClaimHandle}
+              disabled={!isLensAuthenticated || isProcessing || isLoadingLensAuth || !selectedLensAccount}
+              variant='success'
+              className='w-full'
+            >
+              {isProcessing ? 'Processing Linking...' : 'Link Handle'}
+            </Button>
+          </div>
         </div>
-
-        {isLensAuthenticated && selectedLensAccount && (
-          <p className='text-white/70 text-sm pt-2'>Connected to Lens as @{selectedLensAccount?.username?.value}</p>
-        )}
-
-        <p className='text-white/50 text-xs pt-2'>
-          {isLensAuthenticated
-            ? 'Ensure the correct Lens profile is selected above before claiming.'
-            : 'You need to login with your Lens account to enable claiming the handle.'}
-        </p>
-        <p className='text-white/50 text-xs mt-1'>
-          Claiming links @lenx/{xHandle} to @{selectedLensAccount?.username?.value || 'your selected Lens profile'}.
-        </p>
       </motion.div>
     </motion.div>
   );

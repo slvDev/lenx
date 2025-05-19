@@ -64,23 +64,21 @@ export const itemVariants: Variants = {
  * Button animation variants
  */
 export const buttonVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.8 },
+  hidden: { opacity: 0, scale: 0.97 },
   visible: {
     opacity: 1,
     scale: 1,
     transition: {
-      type: 'spring',
-      stiffness: 200,
-      damping: 15,
+      ease: 'easeInOut',
+      duration: 0.1,
     },
   },
   hover: {
     scale: 1.05,
     opacity: 1,
     transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 10,
+      ease: 'easeInOut',
+      duration: 0.1,
     },
   },
   tap: { scale: 0.95, opacity: 1 },

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { buttonVariants as sharedButtonVariants } from '@/lib/animations';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'warning';
+export type ButtonVariant = 'primary' | 'secondary' | 'warning' | 'success' | 'gray';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
@@ -43,6 +43,9 @@ export function Button({
       'bg-transparent text-purple-400 border border-purple-500/50 hover:bg-purple-500/10 focus:ring-purple-500/30',
     warning:
       'bg-amber-600 text-white hover:bg-amber-700 shadow-lg shadow-amber-500/30 border-none focus:ring-amber-500',
+    success:
+      'bg-green-600 text-white hover:bg-green-700 shadow-lg shadow-green-500/30 border-none focus:ring-green-500',
+    gray: 'bg-gray-600 text-white hover:bg-gray-700 shadow-lg shadow-gray-700/20 border-none focus:ring-gray-500',
   };
 
   const baseClasses =

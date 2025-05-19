@@ -81,7 +81,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
     <motion.div variants={containerVariants} initial='hidden' animate='visible' className='w-full max-w-3xl mx-auto'>
       <motion.div variants={itemVariants} className='mb-8 text-center'>
         <h2 className='text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
-          {xHandle ? `Ready to claim @x/${xHandle.toLowerCase()} on Lens?` : 'Connect your X account'}
+          {xHandle ? `Ready to link @x/${xHandle.toLowerCase()} to your Lens account?` : 'Connect your X account'}
         </h2>
       </motion.div>
 
@@ -116,7 +116,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
         </motion.div>
       ) : (
         <>
-          {isXAuthenticated && xHandle && !usernameExists && (
+          {/* {isXAuthenticated && xHandle && !usernameExists && (
             <motion.div
               variants={itemVariants}
               className='mb-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 text-green-400 rounded-lg'
@@ -134,11 +134,13 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
                 </div>
                 <div>
                   <p className='font-medium mb-1'>Handle Available!</p>
-                  <p className='text-sm'>Great news! Your X handle @{xHandle} is available to claim on Lens.</p>
+                  <p className='text-sm'>
+                    Great news! Your X handle @x/{xHandle.toLowerCase()} is available to claim on Lens.
+                  </p>
                 </div>
               </div>
             </motion.div>
-          )}
+          )} */}
 
           {isXAuthenticated && xHandle && usernameExists && (
             <motion.div
@@ -158,7 +160,7 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
                 </div>
                 <div>
                   <p className='font-medium mb-1'>
-                    Congratulations! Your @x/{xHandle?.toLowerCase()} is Already Claimed
+                    Congratulations! Your @x/{xHandle?.toLowerCase()} is Already Linked
                   </p>
                   <div className='text-sm space-y-1 mt-2'>
                     {isLoadingAccountOf || isLoadingHeyHandle ? (
@@ -209,11 +211,11 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
               <span className='w-8 h-8 bg-purple-500/30 rounded-full flex items-center justify-center mr-2 text-sm'>
                 1
               </span>
-              What you're doing
+              What are we doing?
             </h3>
             <p className='text-white/70 text-sm leading-relaxed'>
-              This app helps you join Lens Protocol. We'll use your X handle to create your Lens username and send it to
-              your Lens account.
+              This app helps you link your X handle to your Lens account. Later this will allow you to find your X
+              friends on Lens, sync your X feed to Lens, and more.
             </p>
           </div>
 
@@ -227,15 +229,15 @@ const StepXLogin = ({ onComplete }: StepXLoginProps) => {
             <ul className='space-y-2 text-white/70 text-sm'>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Connect X to get your handle</span>
+                <span>Connect your X Account</span>
               </li>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Connect your wallet and fetch your Lens account</span>
+                <span>Connect your Lens Account</span>
               </li>
               <li className='flex items-start'>
                 <span className='text-purple-400 mr-2'>•</span>
-                <span>Send your X handle to selected Lens account</span>
+                <span>Link your X handle to your Lens account</span>
               </li>
             </ul>
           </div>

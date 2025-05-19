@@ -72,18 +72,17 @@ const StepConnectWallet = ({
         <h2 className='text-3xl font-bold text-white bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent'>
           Connect Wallet & Select Lens Account
         </h2>
-        {!isConnected && <p className='mt-2 text-white/70'>Connect your wallet where you have a Lens accounts.</p>}
-
-        {isConnected && xHandle && (isLoadingLensAccounts || lensAccounts.length > 0) && (
-          <p className='mt-2 text-white/70'>
-            {`Select which Lens account you want to associate with your X handle @${xHandle}.`}
-          </p>
-        )}
       </motion.div>
 
       <motion.div variants={itemVariants} className='flex flex-col items-center justify-center gap-4 mb-12'>
         <ConnectWalletWrapper />
       </motion.div>
+
+      {isConnected && xHandle && (isLoadingLensAccounts || lensAccounts.length > 0) && (
+        <p className='mt-2 text-white/70 text-center'>
+          {`Select which Lens account you want to link with your X handle @x/${xHandle.toLowerCase()}.`}
+        </p>
+      )}
 
       {isConnected && xHandle && (
         <div ref={accountsRef} className='mt-8 space-y-8'>
@@ -163,7 +162,7 @@ const StepConnectWallet = ({
               variants={itemVariants}
               className='bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 p-6 rounded-lg text-center my-8'
             >
-              <p className='font-medium mb-2 text-lg'>No Lens Profiles Found</p>
+              <p className='font-medium mb-2 text-lg'>No Lens Acounts Found</p>
               <p className='text-sm'>
                 Your connected wallet does not own any Lens profiles. You might need to create one first or connect a
                 different wallet.
