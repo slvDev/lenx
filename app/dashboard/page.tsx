@@ -10,13 +10,20 @@ import StepIndicator from '@/components/ui/StepIndicator';
 import StepContent from '@/components/ui/StepContent';
 import { StepXLogin, StepConnectWallet, StepClaimHandle } from '@/components/dashboard/Steps';
 import { containerVariants, cardVariants, confettiVariants, confettiTransition } from '@/lib/animations';
-import { Account } from '@lens-protocol/client';
+import { Account, evmAddress } from '@lens-protocol/client';
+import { createUsername } from '@lens-protocol/client/actions';
+import { useLensProfile } from '@/contexts/LensProfileProvider';
+import { handleOperationWith } from '@lens-protocol/client/viem';
+import { useWalletClient } from 'wagmi';
+import { LENX_NAMESPACE_ADDRESS } from '@/lib/constants';
 
 const STEPS = ['X Login', 'Connect Wallet', 'Claim Handle'];
 
 export default function DashboardPage() {
   const router = useRouter();
   const { isXAuthenticated, xHandle, isLoadingXAuth } = useXAuth();
+  const { sessionClient } = useLensProfile();
+  const { data: walletClient } = useWalletClient();
 
   const [lensAccounts, setLensAccounts] = useState<Account[]>([]);
   const [selectedLensAccount, setSelectedLensAccount] = useState<Account | null>(null);
@@ -30,8 +37,19 @@ export default function DashboardPage() {
     }
   }, [isXAuthenticated, isLoadingXAuth, router]);
 
-  const handleClaimHandle = () => {
-    console.log(`Claiming handle @${xHandle} for Lens account ${selectedLensAccount}`);
+  const handleClaimHandle = async () => {
+    if (!xHandle) return;
+
+    await createUsername(sessionClient, {
+      username: {
+        localName: `${xHandle.toLowerCase()}`,
+        namespace: evmAddress(LENX_NAMESPACE_ADDRESS),
+      },
+      autoAssign: true,
+    })
+      .andThen(handleOperationWith(walletClient))
+      .andThen(sessionClient.waitForTransaction);
+
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 3000);
   };
