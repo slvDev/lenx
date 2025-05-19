@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'LenX',
   description: 'Link your X handle to your Lens profile',
+  icons: {
+    icon: '/LenX.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
