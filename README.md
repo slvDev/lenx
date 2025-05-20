@@ -23,6 +23,7 @@
 
 <div align="center">
   <img src="lenx.png" alt="Example of 'Linked with X' usage" width="50%"/>
+  <p><em>"Linked with X" feature as implemented in <a href="https://github.com/heyverse/hey/pull/5598">hey#5598</a> PR</em></p>
 </div>
 
 ---
